@@ -1,8 +1,8 @@
-import express from 'express';
-import cors from 'cors';
-import { WebSocketServer } from 'ws';
-import type { Server } from 'http';
-import type { ChatMessage, ServerMessage } from './types.js';
+import express from "express";
+import cors from "cors";
+import { WebSocketServer } from "ws";
+import type { Server } from "http";
+import type { ChatMessage, ServerMessage } from "./types.js";
 
 const app = express();
 const PORT = Number(process.env.PORT || 4000);
@@ -10,8 +10,8 @@ const PORT = Number(process.env.PORT || 4000);
 app.use(cors());
 app.use(express.json());
 
-app.get('/health', (_req, res) => {
-  res.json({ status: 'ok', service: 'TalkPulse backend' });
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok", service: "TalkPulse backend" });
 });
 
 const server: Server = app.listen(PORT, () => {
@@ -22,8 +22,8 @@ const wss = new WebSocketServer({ server });
 
 const broadcastMessage = (message: ChatMessage) => {
   const payload: ServerMessage = {
-    type: 'chat',
-    payload: message
+    type: "chat",
+    payload: message,
   };
 
   const data = JSON.stringify(payload);
@@ -35,28 +35,28 @@ const broadcastMessage = (message: ChatMessage) => {
   });
 };
 
-wss.on('connection', (ws) => {
-  console.log('A client connected');
+wss.on("connection", (ws) => {
+  console.log("A client connected");
 
-  ws.on('message', (raw) => {
+  ws.on("message", (raw) => {
     try {
       const parsed = JSON.parse(raw.toString()) as ServerMessage;
 
-      if (parsed.type === 'chat' && parsed.payload) {
+      if (parsed.type === "chat" && parsed.payload) {
         const message: ChatMessage = {
           sender: parsed.payload.sender,
           text: parsed.payload.text,
-          timestamp: parsed.payload.timestamp
+          timestamp: parsed.payload.timestamp,
         };
 
         broadcastMessage(message);
       }
     } catch (error) {
-      console.error('Invalid message received:', error);
+      console.error("Invalid message received:", error);
     }
   });
 
-  ws.on('close', () => {
-    console.log('A client disconnected');
+  ws.on("close", () => {
+    console.log("A client disconnected");
   });
 });

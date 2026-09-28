@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 type ChatMessage = {
   sender: string;
@@ -6,12 +6,12 @@ type ChatMessage = {
   timestamp: string;
 };
 
-const backendUrl = 'ws://localhost:4000';
+const backendUrl = "ws://localhost:4000";
 
 function App() {
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
   const [joined, setJoined] = useState(false);
-  const [message, setMessage] = useState('');
+  const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const socketRef = useRef<WebSocket | null>(null);
 
@@ -22,22 +22,22 @@ function App() {
     socketRef.current = socket;
 
     socket.onopen = () => {
-      console.log('Connected to TalkPulse backend');
+      console.log("Connected to TalkPulse backend");
     };
 
     socket.onmessage = (event) => {
       const parsed = JSON.parse(event.data as string) as {
-        type: 'chat';
+        type: "chat";
         payload: ChatMessage;
       };
 
-      if (parsed.type === 'chat') {
+      if (parsed.type === "chat") {
         setMessages((current) => [...current, parsed.payload]);
       }
     };
 
     socket.onclose = () => {
-      console.log('WebSocket disconnected');
+      console.log("WebSocket disconnected");
     };
 
     return () => {
@@ -62,21 +62,23 @@ function App() {
     const payload: ChatMessage = {
       sender: username,
       text: trimmed,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
-    socket.send(JSON.stringify({ type: 'chat', payload }));
-    setMessage('');
+    socket.send(JSON.stringify({ type: "chat", payload }));
+    setMessage("");
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       handleJoin();
     }
   };
 
-  const handleMessageKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+  const handleMessageKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
+    if (event.key === "Enter") {
       handleSend();
     }
   };
@@ -118,7 +120,12 @@ function App() {
               <div key={`${msg.timestamp}-${index}`} className="message-item">
                 <div className="message-meta">
                   <strong>{msg.sender}</strong>
-                  <span>{new Date(msg.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                  <span>
+                    {new Date(msg.timestamp).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
                 </div>
                 <p>{msg.text}</p>
               </div>

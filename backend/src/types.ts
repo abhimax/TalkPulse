@@ -5,6 +5,6 @@ export type ChatMessage = {
 };
 
 export type ServerMessage = {
-  type: 'chat';
+  type: "chat";
   payload: ChatMessage;
 };
